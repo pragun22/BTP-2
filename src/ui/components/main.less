@@ -1,0 +1,15 @@
+@import (less, reference) "../../assets/styles/colors.less";
+@import (less, reference) "../../assets/styles/mixins.less";
+
+.main {
+  display: block; // IE11 fix
+  width: 100%; // IE11 fix
+  .fontRoboto();
+  text-align: center;
+  color: @color-text;
+  margin-top: 68px;
+  padding-top: 20px;
+  position: relative;
+  box-sizing: border-box;
+  background-color: @color-background;
+}

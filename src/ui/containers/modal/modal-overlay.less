@@ -1,0 +1,21 @@
+.modal-container {
+  display: none;
+  position: fixed;
+  background-color: rgba(34, 34, 34, 0.55); // IE11 fix
+  background-color: #2228;
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+
+  &.animateOpacity {
+    opacity: 1;
+  }
+
+  &.showOverlay {
+    display: block;
+  }
+}
