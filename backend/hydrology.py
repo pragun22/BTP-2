@@ -14,8 +14,6 @@ from pcraster import numpy2pcr, setclone, Scalar, lddcreate, scalar, accuthresho
 from osgeo import gdal
 import matplotlib.pyplot as plt
 import numpy as np
-from tifffile import imread, imwrite
-from skimage.transform import resize
 import rasterio
 from rasterio.enums import Resampling
 from os.path import expanduser
