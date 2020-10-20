@@ -17,4 +17,5 @@
 * **matrix** * - Matrix containing amount of water at each pixel after hydrological simulation
 * **bbox** - Coordinates of the bounding box corresponding to the returned matrix.
 * **centre** - Coordinate of centre of the city in parameter. Google map is centred at this coordinate for display.
+
 Sample response can be found [here](https://github.com/pragun22/BTP-2/blob/backend/backend/sample_response.json).
