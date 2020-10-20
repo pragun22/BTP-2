@@ -17,11 +17,11 @@ class NumpyEncoder(json.JSONEncoder):
 @app.route('/get_map', methods=['GET'])
 def runner():
     # needs city and date as param
-    matrix = hydrology.map_hydrology("Hyderabad", "10/1/11")
+    centre, bbox, matrix = hydrology.map_hydrology("Mumbai", "10/1/11")
     if len(matrix) == 0:
         return jsonify({"err": "An unexpected error occured"}), 500
     else:
-        return jsonify({"mat": matrix.tolist()}), 200
+        return jsonify({"centre": centre, "bbox": bbox, "mat": matrix.tolist()}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8081)
