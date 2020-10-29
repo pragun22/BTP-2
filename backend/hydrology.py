@@ -154,10 +154,10 @@ def hydrology_mapping(rainfall, infiltration=None, soil=None):
 
 
 def map_hydrology(city, date):
-    # update later with rainfall api call
-    # rainfall = get_rainfall(date)
+    city = city.lower()
+    rainfall = get_rainfall(city, date)
     rainfall = 0.5
     process_file(city)
-    cityCentre = [(float(cityToBbox[city][0])+float(cityToBbox[city][2]))/2, (float(cityToBbox[city][1])+float(cityToBbox[city][3]))/2]
+    cityCentre = [(float(cityToBbox[city][0]) + float(cityToBbox[city][2])) / 2,
+                  (float(cityToBbox[city][1]) + float(cityToBbox[city][3])) / 2]
     return cityCentre, [lngmin, latmin, lngmax, latmax],  hydrology_mapping(rainfall)
-    
