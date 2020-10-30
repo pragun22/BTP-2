@@ -34,8 +34,6 @@ def scraper(url):
     return data
 
 # date format dd-mm-yyyy
-
-
 def get_rainfall(city, date):
     base_url = 'https://www.wunderground.com/hourly/in'
     date = date.split("-")

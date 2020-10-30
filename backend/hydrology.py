@@ -8,8 +8,7 @@ import glob
 import shutil
 import zipfile
 import subprocess
-import requests
-from pcraster import numpy2pcr, setclone, Scalar, lddcreate, scalar, accuthresholdflux, pcr2numpy
+from pcraster import matplotlib, numpy2pcr, setclone, Scalar, lddcreate, scalar, accuthresholdflux, pcr2numpy, lookupscalar
 
 from osgeo import gdal
 import matplotlib.pyplot as plt
@@ -19,6 +18,8 @@ from rasterio.enums import Resampling
 from os.path import expanduser
 import json
 from PIL import Image
+import rasterio.merge
+import rainfall
 
 
 home = expanduser("~")
@@ -69,8 +70,6 @@ def scale_image(dem, dimension):
             with rasterio.open('scaled.tif', 'w', **profile) as dataset:
                 dataset.write(data, 1)
 
-import rasterio.merge
-
 
 def process_file(city):
     files = []
@@ -87,7 +86,6 @@ def process_file(city):
         lngmax = max(lngmax, int(fileToBbox[file][2]))
         latmax = max(latmax, int(fileToBbox[file][3]))
     # city lies withing single Bbox so no need to merge
-    return Bbox
     if len(files) == 1:
         dem = glob.glob('dataset/' + files[0] + '/*/*.tif')[0]
         scale_image(dem, (100, 100))
@@ -127,17 +125,34 @@ def process_file(city):
                 dest.write(mosaic)
             scale_image('scaled.tif', (200, 100))
 
+def hydrology_mapping1(dem, rain, infiltration=None, soil=None):
+    try:  
+        ldd = lddcreate(dem, 1e31, 1e31, 1e31, 1e31)
+        infilcap = scalar(0)
+        if soil is not None:
+            if infiltration is not None:
+                infilcap = lookupscalar(infiltration, soil)
+            else:
+                infilcap = scalar(soil)
+        randomField = scalar(rain)
+        runoff = accuthresholdflux(ldd, randomField, infilcap)
+        x = pcr2numpy(runoff, 0)
+        matplotlib.plot(runoff, labels=None, title=None, filename="random.jpg")
+        return "random.jpg"
+    except:
+        return []
 
-def hydrology_mapping(rainfall, infiltration=None, soil=None):
+
+def hydrology_mapping(dem, rain, infiltration=None, soil=None):
     try:
-        x = gdal.Open("scaled.tif")
+        x = gdal.Open(dem)
         gdal_band = x.GetRasterBand(1)
         nodataval = gdal_band.GetNoDataValue()
         x = x.ReadAsArray().astype(np.float)
         if np.any(x == nodataval):
-            x[x == nodataval] = 1e31
+           x[x == nodataval] = 1e31
         setclone(x.shape[0], x.shape[1], 0.1, -lngmin, latmin)
-        x = numpy2pcr(Scalar, x, -1)
+        x = numpy2pcr(Scalar, x, 0)
         ldd = lddcreate(x, 1e31, 1e31, 1e31, 1e31)
         infilcap = scalar(0)
         if soil is not None:
@@ -145,9 +160,9 @@ def hydrology_mapping(rainfall, infiltration=None, soil=None):
                 infilcap = lookupscalar(infiltration, soil)
             else:
                 infilcap = scalar(soil)
-        randomField = scalar(rainfall)
+        randomField = scalar(rain)
         runoff = accuthresholdflux(ldd, randomField, infilcap)
-        x = pcr2numpy(runoff, -1)
+        x = pcr2numpy(runoff, 0)
         return x
     except:
         return []
@@ -155,9 +170,17 @@ def hydrology_mapping(rainfall, infiltration=None, soil=None):
 
 def map_hydrology(city, date):
     city = city.lower()
-    rainfall = get_rainfall(city, date)
-    rainfall = 0.5
+    rain = rainfall.get_rainfall(city, date)
     process_file(city)
     cityCentre = [(float(cityToBbox[city][0]) + float(cityToBbox[city][2])) / 2,
                   (float(cityToBbox[city][1]) + float(cityToBbox[city][3])) / 2]
-    return cityCentre, [lngmin, latmin, lngmax, latmax],  hydrology_mapping(rainfall)
+    return cityCentre, [lngmin, latmin, lngmax, latmax],  hydrology_mapping("scaled.tif", rain)
+
+
+def custom_hydrology(rain, dem, infiltration=None, soil=None):
+    # if dem in map format then not nedd to rescale
+    if dem[-3:] == "map":
+        return hydrology_mapping1(dem, int(rain), infiltration, soil)
+    else:
+        scale_image(dem, (100, 100))
+        return hydrology_mapping("scaled.tif", int(rain))
