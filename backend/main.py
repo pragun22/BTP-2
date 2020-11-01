@@ -5,7 +5,9 @@ from flask import send_file
 import hydrology
 import json
 import os
+from flask_cors import CORS
 app = Flask(__name__)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['UPLOAD_FOLDER'] = "userdata"
 
 
@@ -36,14 +38,15 @@ def file_upload():
         soil = "/".join([target,"soil."+forma])
     except:
         soil = None
-    rain = request.values['rain']
+    rain = request.form['rain']
     dem = request.files['dem']
     forma = dem.filename.split('.')[1] 
     dem.save("/".join([target,"dem."+forma]))
     dem = "/".join([target,"dem."+forma])
     filename = hydrology.custom_hydrology(rain, dem, infil, soil)
+    if isinstance(filename, list):
+        return "An error occured",200
     return send_file(filename, mimetype='image/jpg'), 200
-
 @app.route('/get_map', methods=['GET'])
 def runner():
     # needs city and date as param
