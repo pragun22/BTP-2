@@ -4,7 +4,9 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Input from '@material-ui/core/Input';
+import './../styles/dataInput.css';
 
 class UserInput extends React.Component {
   constructor(props) {
@@ -37,30 +39,61 @@ class UserInput extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.handleUploadImage}>
-        <div>
-        DEM
-          <input ref={(ref) => { this.uploadDem = ref; }} type="file" />
-        </div>
-        <br />
-        <div>
-        <div>
-        Infiltration
-          <input ref={(ref) => { this.uploadInf = ref; }} type="file" />
-        </div>
-        <br />
-        <div>
-        Soil
-          <input ref={(ref) => { this.uploadSoil = ref; }} type="file" />
-        </div>
-        <br />
-        <div>
-          <input ref={(ref) => { this.rainData = ref; }} type="text" placeholder="Enter the amount of rainfall in mm" />
-        </div>
-        <br />
-          <button>Upload</button>
-        </div>
-      </form>
+        <Container maxWidth="xs" className="container">
+            <CssBaseline />
+			<Typography component="h1" variant="h4" align="center">
+				Input Data
+			</Typography>
+			<form onSubmit={this.handleUploadImage} className="form-div">
+				<div className="input-div">
+					<Typography component="h3" variant="h5" fon>
+						DEM
+					</Typography>
+					<Input
+						type="file"
+						ref={(ref) => { this.uploadDem = ref; }}
+						id="dem"
+					/>
+					
+				</div>
+				<div className="input-div">
+					<Typography component="h3" variant="h5">
+						Infiltration
+					</Typography>
+					<Input
+						type="file"
+						ref={(ref) => { this.uploadInf = ref; }}
+					/>
+				</div>
+				<div className="input-div">
+					<Typography component="h3" variant="h5">
+						DEM
+					</Typography>
+					<Input
+						type="file"
+						ref={(ref) => { this.uploadSoil = ref; }}
+					/>
+				</div>
+				<div className="input-div">
+					<Typography component="h3" variant="h5">
+						Rainfall
+					</Typography>
+					<TextField
+						variant="outlined"
+						margin="normal"
+						required
+						fullWidth
+						id="name"
+						label="Enter the amount of rainfall in mm"
+						name="Rain"
+						autoComplete="name"
+						ref={(ref) => { this.rainData = ref; }}
+						autoFocus
+					/>
+				</div>
+				<Button color="secondary">Upload</Button>
+			</form>
+		</Container>
     );
   }
 }

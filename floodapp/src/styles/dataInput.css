@@ -1,0 +1,13 @@
+.container{
+    margin-top: 100px;
+}
+.form-div{
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    background-color: skyblue;
+    border-radius: 10px;
+}
+.input-div{
+    margin-top: 20px;
+}
