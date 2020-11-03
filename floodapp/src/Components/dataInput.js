@@ -14,6 +14,8 @@ class UserInput extends React.Component {
 
     this.state = {
       imageURL: '',
+      responseData: '',
+      responseReceived: false,
     };
 
     this.handleUploadImage = this.handleUploadImage.bind(this);
@@ -21,37 +23,46 @@ class UserInput extends React.Component {
 
   handleUploadImage(ev) {
     ev.preventDefault();
-
     const data = new FormData();
-    data.append('dem', this.uploadDem.files[0]);
-    data.append('rain', this.rainData.value);
-    data.append('infil', this.uploadInf.files[0]);
-    data.append('soil', this.uploadSoil.files[0]);
-    fetch('http://localhost:8081/custom_data', {
-      method: 'POST',
-      body: data,
-    }).then((response) => {
-      response.json().then((body) => {
-      	console.log(response);
-      });
-    });
+    data.append('dem', this.uploadDem);
+    data.append('rain', this.rainData);
+    data.append('infil', this.uploadInf);
+    data.append('soil', this.uploadSoil);
+		fetch('http://localhost:8081/custom_data', {
+			method: 'POST',
+			body: data,
+		}).then((response) => {
+			response.json().then((body) => {
+				console.log(response);
+				console.log(body.url);
+				this.setState({
+					responseData: body.url
+				})
+				this.setState({
+					responseReceived: true
+				})
+			});
+		});
+
   }
 
   render() {
     return (
-        <Container maxWidth="xs" className="container">
+       <Container maxWidth="xs" className="container">
             <CssBaseline />
-			<Typography component="h1" variant="h4" align="center">
+			
+			 <Typography component="h1" variant="h4" align="center">
 				Input Data
 			</Typography>
-			<form onSubmit={this.handleUploadImage} className="form-div">
+			<>{!this.state.responseReceived && <form onSubmit={this.handleUploadImage} className="form-div">
 				<div className="input-div">
-					<Typography component="h3" variant="h5" fon>
+					<Typography component="h3" variant="h5">
 						DEM
 					</Typography>
 					<Input
 						type="file"
-						ref={(ref) => { this.uploadDem = ref; }}
+						 onInput={ e=>{this.uploadDem = e.target.files[0]}}
+						// ref={(ref) => { this.uploadDem = ref; }}
 						id="dem"
 					/>
 					
@@ -62,16 +73,18 @@ class UserInput extends React.Component {
 					</Typography>
 					<Input
 						type="file"
-						ref={(ref) => { this.uploadInf = ref; }}
+						 onInput={ e=>{this.uploadInf = e.target.files[0]}}
+						// ref={(ref) => { this.uploadInf = ref; }}
 					/>
 				</div>
 				<div className="input-div">
 					<Typography component="h3" variant="h5">
-						DEM
+						Soil
 					</Typography>
 					<Input
 						type="file"
-						ref={(ref) => { this.uploadSoil = ref; }}
+						 onInput={ e=>{this.uploadSoil = e.target.files[0]}}
+						// ref={(ref) => { this.uploadSoil = ref; }}
 					/>
 				</div>
 				<div className="input-div">
@@ -87,13 +100,17 @@ class UserInput extends React.Component {
 						label="Enter the amount of rainfall in mm"
 						name="Rain"
 						autoComplete="name"
-						ref={(ref) => { this.rainData = ref; }}
+						 onInput={ e=>{this.rainData = e.target.value}}
+
+						// ref={(ref) => { this.rainData = ref; }}
 						autoFocus
 					/>
 				</div>
-				<Button color="secondary">Upload</Button>
-			</form>
+				<Button type = "submit" color="secondary">Upload</Button>
+			</form>}</>
+			<>{this.state.responseReceived &&<div> <img src={this.state.responseData} width="400" height="400" /></div>}</>
 		</Container>
+
     );
   }
 }

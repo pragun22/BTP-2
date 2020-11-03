@@ -44,9 +44,10 @@ def file_upload():
     dem.save("/".join([target,"dem."+forma]))
     dem = "/".join([target,"dem."+forma])
     filename = hydrology.custom_hydrology(rain, dem, infil, soil)
+    print(filename)
     if isinstance(filename, list):
-        return "An error occured",200
-    return send_file(filename, mimetype='image/jpg'), 200
+        return jsonify({"url": "http://localhost:8081/static/error.png"}), 200
+    return jsonify({"url": "http://localhost:8081/static/"+filename}), 200
 @app.route('/get_map', methods=['GET'])
 def runner():
     # needs city and date as param

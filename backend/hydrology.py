@@ -20,6 +20,7 @@ import json
 from PIL import Image
 import rasterio.merge
 import rainfall
+import uuid
 
 
 home = expanduser("~")
@@ -56,19 +57,22 @@ def comparator(file):
 
 
 def scale_image(dem, dimension):
-    with rasterio.Env():
-        with rasterio.open(dem) as dataset:
-            data = dataset.read(1, out_shape=dimension,
-                                resampling=Resampling.bilinear)
-            transform = dataset.transform * dataset.transform.scale(
-                (dataset.height / data.shape[0]),
-                (dataset.width / data.shape[1])
-            )
-            profile = dataset.profile
-            profile.update(transform=transform, width=data.shape[
-                           1], height=data.shape[0])
-            with rasterio.open('scaled.tif', 'w', **profile) as dataset:
-                dataset.write(data, 1)
+    try:
+        with rasterio.Env():
+            with rasterio.open(dem) as dataset:
+                data = dataset.read(1, out_shape=dimension,
+                                    resampling=Resampling.bilinear)
+                transform = dataset.transform * dataset.transform.scale(
+                    (dataset.height / data.shape[0]),
+                    (dataset.width / data.shape[1])
+                )
+                profile = dataset.profile
+                profile.update(transform=transform, width=data.shape[
+                               1], height=data.shape[0])
+                with rasterio.open('scaled.tif', 'w', **profile) as dataset:
+                    dataset.write(data, 1)
+    except:
+        pass
 
 
 def process_file(city):
@@ -125,8 +129,9 @@ def process_file(city):
                 dest.write(mosaic)
             scale_image('scaled.tif', (200, 100))
 
+
 def hydrology_mapping1(dem, rain, infiltration=None, soil=None):
-    try:  
+    try:
         ldd = lddcreate(dem, 1e31, 1e31, 1e31, 1e31)
         infilcap = scalar(0)
         if soil is not None:
@@ -137,20 +142,22 @@ def hydrology_mapping1(dem, rain, infiltration=None, soil=None):
         randomField = scalar(rain)
         runoff = accuthresholdflux(ldd, randomField, infilcap)
         x = pcr2numpy(runoff, 0)
-        matplotlib.plot(runoff, labels=None, title=None, filename="random.jpg")
-        return "random.jpg"
+        filename = str(uuid.uuid4()) + ".jpg"
+        matplotlib.plot(runoff, labels=None, title=None,
+                        filename="static/" + filename)
+        return filename
     except:
         return []
 
 
-def hydrology_mapping(dem, rain, infiltration=None, soil=None):
+def hydrology_mapping(dem, rain, infiltration=None, soil=None, flag=0):
     try:
         x = gdal.Open(dem)
         gdal_band = x.GetRasterBand(1)
         nodataval = gdal_band.GetNoDataValue()
         x = x.ReadAsArray().astype(np.float)
         if np.any(x == nodataval):
-           x[x == nodataval] = 1e31
+            x[x == nodataval] = 1e31
         setclone(x.shape[0], x.shape[1], 0.1, -lngmin, latmin)
         x = numpy2pcr(Scalar, x, 0)
         ldd = lddcreate(x, 1e31, 1e31, 1e31, 1e31)
@@ -163,12 +170,21 @@ def hydrology_mapping(dem, rain, infiltration=None, soil=None):
         randomField = scalar(rain)
         runoff = accuthresholdflux(ldd, randomField, infilcap)
         x = pcr2numpy(runoff, 0)
+        if flag:
+            filename = str(uuid.uuid4()) + ".jpg"
+            matplotlib.plot(runoff, labels=None, title=None,
+                            filename="static/" + filename)
+            return filename
         return x
     except:
         return []
 
 
 def map_hydrology(city, date):
+    try:
+        os.remove("static/random.jpg")
+    except:
+        pass
     city = city.lower()
     rain = rainfall.get_rainfall(city, date)
     process_file(city)
@@ -183,4 +199,4 @@ def custom_hydrology(rain, dem, infiltration=None, soil=None):
         return hydrology_mapping1(dem, int(rain), infiltration, soil)
     else:
         scale_image(dem, (100, 100))
-        return hydrology_mapping("scaled.tif", int(rain))
+        return hydrology_mapping("scaled.tif", int(rain), infiltration, soil, 1)
