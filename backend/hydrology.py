@@ -196,7 +196,7 @@ def map_hydrology(city, date):
 def custom_hydrology(rain, dem, infiltration=None, soil=None):
     # if dem in map format then not nedd to rescale
     if dem[-3:] == "map":
-        return hydrology_mapping1(dem, int(rain), infiltration, soil)
+        return hydrology_mapping1(dem, rain, infiltration, soil)
     else:
         scale_image(dem, (100, 100))
-        return hydrology_mapping("scaled.tif", int(rain), infiltration, soil, 1)
+        return hydrology_mapping("scaled.tif", rain, infiltration, soil, 1)

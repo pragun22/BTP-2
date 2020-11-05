@@ -38,13 +38,15 @@ def file_upload():
         soil = "/".join([target,"soil."+forma])
     except:
         soil = None
-    rain = request.form['rain']
     dem = request.files['dem']
     forma = dem.filename.split('.')[1] 
     dem.save("/".join([target,"dem."+forma]))
     dem = "/".join([target,"dem."+forma])
+    try:
+        rain = int(request.form['rain'])
+    except:        
+        rain = request.files['rain']
     filename = hydrology.custom_hydrology(rain, dem, infil, soil)
-    print(filename)
     if isinstance(filename, list):
         return jsonify({"url": "http://localhost:8081/static/error.png"}), 200
     return jsonify({"url": "http://localhost:8081/static/"+filename}), 200

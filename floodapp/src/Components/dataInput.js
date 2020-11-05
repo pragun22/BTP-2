@@ -28,6 +28,7 @@ class UserInput extends React.Component {
     data.append('rain', this.rainData);
     data.append('infil', this.uploadInf);
     data.append('soil', this.uploadSoil);
+    data.append('rain', this.uploadRain);
 		fetch('http://localhost:8081/custom_data', {
 			method: 'POST',
 			body: data,
@@ -94,7 +95,6 @@ class UserInput extends React.Component {
 					<TextField
 						variant="outlined"
 						margin="normal"
-						required
 						fullWidth
 						id="name"
 						label="Enter the amount of rainfall in mm"
@@ -104,6 +104,16 @@ class UserInput extends React.Component {
 
 						// ref={(ref) => { this.rainData = ref; }}
 						autoFocus
+					/>
+				</div>
+				<Typography component="h3" variant="h5">
+						<center>OR</center>
+				</Typography>
+				<div className="input-div">
+					<Input
+						type="file"
+						 onInput={ e=>{this.uploadRain = e.target.files[0]}}
+						// ref={(ref) => { this.uploadSoil = ref; }}
 					/>
 				</div>
 				<Button type = "submit" color="secondary">Upload</Button>
