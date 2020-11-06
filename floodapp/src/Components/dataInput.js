@@ -34,8 +34,6 @@ class UserInput extends React.Component {
 			body: data,
 		}).then((response) => {
 			response.json().then((body) => {
-				console.log(response);
-				console.log(body.url);
 				this.setState({
 					responseData: body.url
 				})

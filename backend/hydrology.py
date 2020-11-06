@@ -21,7 +21,16 @@ from PIL import Image
 import rasterio.merge
 import rainfall
 import uuid
-
+import matplotlib.colors as mcolors
+cdict = {'red':   ((0.0, 0.0, 0.0),
+                   (0.5, 0.0, 0.0),
+                   (1.0, 1.0, 1.0)),
+         'blue':  ((0.0, 0.0, 0.0),
+                   (1.0, 0.0, 0.0)),
+         'green': ((0.0, 0.0, 1.0),
+                   (0.5, 0.0, 0.0),
+                   (1.0, 0.0, 0.0))}
+cmap = mcolors.LinearSegmentedColormap('my_colormap', cdict, 100)
 
 home = expanduser("~")
 cwd = os.getcwd()
@@ -131,7 +140,7 @@ def process_file(city):
 
 
 def hydrology_mapping1(dem, rain, infiltration=None, soil=None):
-    try:
+    # try:
         ldd = lddcreate(dem, 1e31, 1e31, 1e31, 1e31)
         infilcap = scalar(0)
         if soil is not None:
@@ -142,12 +151,12 @@ def hydrology_mapping1(dem, rain, infiltration=None, soil=None):
         randomField = scalar(rain)
         runoff = accuthresholdflux(ldd, randomField, infilcap)
         x = pcr2numpy(runoff, 0)
-        filename = str(uuid.uuid4()) + ".jpg"
+        filename = "static" + "/" + str(uuid.uuid4()) + ".jpg"
         matplotlib.plot(runoff, labels=None, title=None,
-                        filename="static/" + filename)
+                        filename=filename)
         return filename
-    except:
-        return []
+    # except:
+        # return []
 
 
 def hydrology_mapping(dem, rain, infiltration=None, soil=None, flag=0):
@@ -170,12 +179,15 @@ def hydrology_mapping(dem, rain, infiltration=None, soil=None, flag=0):
         randomField = scalar(rain)
         runoff = accuthresholdflux(ldd, randomField, infilcap)
         x = pcr2numpy(runoff, 0)
-        if flag:
-            filename = str(uuid.uuid4()) + ".jpg"
-            matplotlib.plot(runoff, labels=None, title=None,
-                            filename="static/" + filename)
-            return filename
-        return x
+        filename = str(uuid.uuid4()) + ".jpg"
+        filename = "static/" + filename
+        fig = plt.figure(frameon=False)
+        ax = plt.Axes(fig, [0., 0., 1., 1.])
+        ax.set_axis_off()
+        fig.add_axes(ax)
+        ax.imshow(x, aspect='auto', cmap=cmap)
+        fig.savefig(filename)
+        return filename
     except:
         return []
 
