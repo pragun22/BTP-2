@@ -50,10 +50,11 @@ def file_upload():
     if isinstance(filename, list):
         return jsonify({"url": "http://localhost:8081/static/error.png"}), 200
     return jsonify({"url": "http://localhost:8081/static/"+filename}), 200
-@app.route('/get_map', methods=['GET'])
+@app.route('/get_map', methods=['GET', 'POST'])
 def runner():
-    # needs city and date as param
-    centre, bbox, matrix = hydrology.map_hydrology("mumbai", "05-11-2020")
+    # replace with this later
+    # print(request.form['city'], request.form['date'])
+    centre, bbox, matrix = hydrology.map_hydrology("mumbai", "07-11-2020")
     if len(matrix) == 0:
         return jsonify({"err": "An unexpected error occured"}), 500
     else:

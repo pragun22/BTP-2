@@ -186,7 +186,8 @@ def map_hydrology(city, date):
     except:
         pass
     city = city.lower()
-    rain = rainfall.get_rainfall(city, date)
+    rain = 5
+    # rain = rainfall.get_rainfall(city, date)
     process_file(city)
     cityCentre = [(float(cityToBbox[city][0]) + float(cityToBbox[city][2])) / 2,
                   (float(cityToBbox[city][1]) + float(cityToBbox[city][3])) / 2]

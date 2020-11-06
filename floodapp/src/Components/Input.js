@@ -12,13 +12,35 @@ class Input extends React.Component {
         super(props);
         var today = new Date();
         this.state={
-            date: today.getFullYear() + '-' + (today.getMonth() <= '9' ? '0'+today.getMonth(): today.getMonth()) + '-' + today.getDate(),
+        	date: today.getFullYear() + '-' + (today.getMonth() <= '9' ? '0'+today.getMonth(): today.getMonth()) + '-' + today.getDate(),
+      		responseData: '',
+      		responseReceived: false,
         }
+	    this.handleSubmit = this.handleSubmit.bind(this);
     }
+    handleSubmit(ev) {
+    ev.preventDefault();
+    const data = new FormData();
+    data.append('city', this.uploadCity);
+    data.append('date', this.uploadDate);
+		fetch('http://localhost:8081/get_map', {
+			method: 'POST',
+			body: data,
+		}).then((response) => {
+			response.json().then((body) => {
+				console.log(body);
+				this.setState({
+					responseData: body.url
+				})
+				this.setState({
+					responseReceived: true
+				})
+			});
+		});
+
+  }
     render(){
         var today = new Date();
-        console.log(today);
-        console.log(this.state.date)
         const {classes} = this.props;
         return(
         <Container component="main" maxWidth="xs" className={classes.container}>
@@ -27,7 +49,7 @@ class Input extends React.Component {
                 <Typography component="h1" variant="h5" className={classes.text}>
                 Enter Details
                 </Typography>
-                <form className={classes.form} noValidate>
+                <form className={classes.form} onSubmit={this.handleSubmit}  noValidate>
                 <TextField
                     variant="outlined"
                     margin="normal"
@@ -38,6 +60,7 @@ class Input extends React.Component {
                     name="name"
                     autoComplete="name"
                     autoFocus
+					onInput={ e=>{this.uploadCity = e.target.value}}
                 />
                 <TextField
                     variant="outlined"
@@ -48,6 +71,7 @@ class Input extends React.Component {
                     label="Enter Date"
                     type="date"
                     defaultValue={this.state.date}
+					onInput={ e=>{this.uploadDate = e.target.value}}
                     autoComplete="Date"
                     autoFocus
                     InputLabelProps={{
