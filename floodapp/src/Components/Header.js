@@ -25,11 +25,6 @@ export default () => {
                         Input Data
                     </div>
                 </div>
-                <div className="nav-bar-element">
-                    <div className="nav-bar-text">
-                        Page2
-                    </div>
-                </div>
             </div>
         </div>
     );
