@@ -2,6 +2,7 @@ import React from 'react';
 import {Route} from 'react-router-dom';
 import App from './App';
 import DataInput from './Components/dataInput';
+import Header from './Components/Header';
 
 const routes = [
 	{
@@ -24,6 +25,7 @@ const Routes = () => {
                 key={path}
                 path={path}
             >
+                <Header/>
                 <div className="component">
                     {component}
                 </div>
