@@ -57,8 +57,10 @@ def file_upload():
 def runner():
     # replace with this later
     # print(request.form['city'], request.form['date'])
-    centre, bbox, filename = hydrology.map_hydrology("hyderabad", "07-11-2020")
-    print(filename)
+    city = request.form['city']
+    date = request.form['date']
+    centre, bbox, filename = hydrology.map_hydrology(city, date)
+    print(filename, centre, bbox)
     if isinstance(filename, list):
         return jsonify({"err": "An unexpected error occured"}), 500
     else:

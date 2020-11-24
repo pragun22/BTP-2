@@ -34,8 +34,6 @@ class Input extends React.Component {
 	  GoogleMap,
 	  GroundOverlay,
 	} = require("react-google-maps");
-	console.log("hola");
-	console.log(this.state.url);
 	    this.state.MapWithGroundOverlay = compose(
 	  withScriptjs,
 	  withGoogleMap
@@ -50,7 +48,7 @@ class Input extends React.Component {
 	        new window.google.maps.LatLng(this.state.bbox[1], this.state.bbox[0]),
 	        new window.google.maps.LatLng(this.state.bbox[3], this.state.bbox[2])
 	      )}
-	      defaultOpacity={0.1}
+	      defaultOpacity={0.3}
 	    />
 	  </GoogleMap>
 );

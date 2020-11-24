@@ -140,7 +140,7 @@ def process_file(city):
 
 
 def hydrology_mapping1(dem, rain, infiltration=None, soil=None):
-    # try:
+    try:
         ldd = lddcreate(dem, 1e31, 1e31, 1e31, 1e31)
         infilcap = scalar(0)
         if soil is not None:
@@ -155,8 +155,8 @@ def hydrology_mapping1(dem, rain, infiltration=None, soil=None):
         matplotlib.plot(runoff, labels=None, title=None,
                         filename=filename)
         return filename
-    # except:
-        # return []
+    except:
+        return []
 
 
 def hydrology_mapping(dem, rain, infiltration=None, soil=None, flag=0):
