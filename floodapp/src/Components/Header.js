@@ -25,6 +25,14 @@ export default () => {
                         Input Data
                     </div>
                 </div>
+                 <div 
+                    className="nav-bar-element"
+                    onClick={() => push('/rain_pred')}
+                >
+                    <div className="nav-bar-text">
+                        Rainfall prediction
+                    </div>
+                </div>
             </div>
         </div>
     );

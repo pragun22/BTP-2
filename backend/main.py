@@ -6,6 +6,7 @@ import hydrology
 import json
 import os
 from flask_cors import CORS
+import rain_pred
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['UPLOAD_FOLDER'] = "userdata"
@@ -66,5 +67,8 @@ def runner():
     else:
         return jsonify({"centre": centre, "bbox": bbox, "url": "http://localhost:8081/" + filename}), 200
 
+@app.route('/rain_pred', methods=['GET', 'POST'])
+def rainfall_prediction():
+	return jsonify({"url": "http://localhost:8081/" + rain_pred.pred()}), 200
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8081)

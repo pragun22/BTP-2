@@ -7,6 +7,7 @@ import Container from '@material-ui/core/Container';
 import TextField from '@material-ui/core/TextField';
 import Input from '@material-ui/core/Input';
 import './../styles/dataInput.css';
+import '../App.css';
 
 class UserInput extends React.Component {
   constructor(props) {
@@ -102,16 +103,6 @@ class UserInput extends React.Component {
 
 						// ref={(ref) => { this.rainData = ref; }}
 						autoFocus
-					/>
-				</div>
-				<Typography component="h3" variant="h5">
-						<center>OR</center>
-				</Typography>
-				<div className="input-div">
-					<Input
-						type="file"
-						 onInput={ e=>{this.uploadRain = e.target.files[0]}}
-						// ref={(ref) => { this.uploadSoil = ref; }}
 					/>
 				</div>
 				<Button type = "submit" color="secondary">Upload</Button>

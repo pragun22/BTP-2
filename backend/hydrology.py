@@ -102,6 +102,26 @@ def process_file(city):
     if len(files) == 1:
         dem = glob.glob('dataset/' + files[0] + '/*/*.tif')[0]
         scale_image(dem, (100, 100))
+    elif len(files) == 4:
+        files = sorted(files, key=comparator)
+        dem0 = glob.glob('dataset/' + files[0] + '/*/*.tif')[0]
+        dem1 = glob.glob('dataset/' + files[1] + '/*/*.tif')[0]
+        dem2 = glob.glob('dataset/' + files[2] + '/*/*.tif')[0]
+        dem3 = glob.glob('dataset/' + files[3] + '/*/*.tif')[0]
+        mosaic = []
+        mosaic.append(rasterio.open(dem0))
+        mosaic.append(rasterio.open(dem1))
+        mosaic.append(rasterio.open(dem2))
+        mosaic.append(rasterio.open(dem3))
+        out_meta = mosaic[1].meta.copy()
+        mosaic, out_trans = rasterio.merge.merge(mosaic)
+        out_meta.update({"driver": "GTiff",
+                         "height": mosaic.shape[1],
+                         "width": mosaic.shape[2],
+                         "transform": out_trans})
+        with rasterio.open("scaled.tif", "w", **out_meta) as dest:
+            dest.write(mosaic)
+        scale_image('scaled.tif', (200, 200))
     else:
         # side
         if check(files):
@@ -185,7 +205,7 @@ def hydrology_mapping(dem, rain, infiltration=None, soil=None, flag=0):
         ax = plt.Axes(fig, [0., 0., 1., 1.])
         ax.set_axis_off()
         fig.add_axes(ax)
-        ax.imshow(x, aspect='auto', cmap=cmap)
+        ax.imshow(x, aspect='auto', cmap='Reds')
         fig.savefig(filename)
         return filename
     except:
@@ -200,6 +220,7 @@ def map_hydrology(city, date):
     city = city.lower()
     rain = 5
     # rain = rainfall.get_rainfall(city, date)
+    print(rain)
     process_file(city)
     cityCentre = [(float(cityToBbox[city][0]) + float(cityToBbox[city][2])) / 2,
                   (float(cityToBbox[city][1]) + float(cityToBbox[city][3])) / 2]

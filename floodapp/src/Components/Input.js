@@ -16,41 +16,41 @@ class Input extends React.Component {
         super(props);
         var today = new Date();
         this.state={
-        	date: today.getFullYear() + '-' + (today.getMonth() <= '9' ? '0'+today.getMonth(): today.getMonth()) + '-' + today.getDate(),
-      		responseReceived: false,
-      		url:'',
-      		center:'',
-      		bbox:'',
-      		MapWithGroundOverlay:''
+          date: today.getFullYear() + '-' + (today.getMonth() <= '9' ? '0'+today.getMonth(): today.getMonth()) + '-' + today.getDate(),
+          responseReceived: false,
+          url:'',
+          center:'',
+          bbox:'',
+          MapWithGroundOverlay:''
         }
-	    this.handleSubmit = this.handleSubmit.bind(this);
-	    this.handleMap = this.handleMap.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
+      this.handleMap = this.handleMap.bind(this);
     }
     handleMap(){
-   	const { compose } = require("recompose");
-	const {
-	  withScriptjs,
-	  withGoogleMap,
-	  GoogleMap,
-	  GroundOverlay,
-	} = require("react-google-maps");
-	    this.state.MapWithGroundOverlay = compose(
-	  withScriptjs,
-	  withGoogleMap
-	)(props =>
-	  <GoogleMap
-	    defaultZoom={12}
-	    defaultCenter={{lat: this.state.center[1], lng: this.state.center[0]}}
-	  >
-	    <GroundOverlay
-	      defaultUrl={this.state.url}
-	      defaultBounds={new window.google.maps.LatLngBounds(
-	        new window.google.maps.LatLng(this.state.bbox[1], this.state.bbox[0]),
-	        new window.google.maps.LatLng(this.state.bbox[3], this.state.bbox[2])
-	      )}
-	      defaultOpacity={0.3}
-	    />
-	  </GoogleMap>
+    const { compose } = require("recompose");
+  const {
+    withScriptjs,
+    withGoogleMap,
+    GoogleMap,
+    GroundOverlay,
+  } = require("react-google-maps");
+      this.state.MapWithGroundOverlay = compose(
+    withScriptjs,
+    withGoogleMap
+  )(props =>
+    <GoogleMap
+      defaultZoom={12}
+      defaultCenter={{lat: this.state.center[1], lng: this.state.center[0]}}
+    >
+      <GroundOverlay
+        defaultUrl={this.state.url}
+        defaultBounds={new window.google.maps.LatLngBounds(
+          new window.google.maps.LatLng(this.state.bbox[1], this.state.bbox[0]),
+          new window.google.maps.LatLng(this.state.bbox[3], this.state.bbox[2])
+        )}
+        defaultOpacity={0.3}
+      />
+    </GoogleMap>
 );
     }
     handleSubmit(ev) {
@@ -58,28 +58,28 @@ class Input extends React.Component {
     const data = new FormData();
     data.append('city', this.uploadCity);
     data.append('date', this.uploadDate);
-		fetch('http://localhost:8081/get_map', {
-			method: 'POST',
-			body: data,
-		}).then((response) => {
-			response.json().then((body) => {
-				this.setState({
-					url:body.url
-				})
-				this.setState({
-					center: body.centre
-				})
-				this.setState({
-					bbox: body.bbox
-				})
-				
-				this.handleMap();
-				this.setState({
-					responseReceived: true
-				})
+    fetch('http://localhost:8081/get_map', {
+      method: 'POST',
+      body: data,
+    }).then((response) => {
+      response.json().then((body) => {
+        this.setState({
+          url:body.url
+        })
+        this.setState({
+          center: body.centre
+        })
+        this.setState({
+          bbox: body.bbox
+        })
+        
+        this.handleMap();
+        this.setState({
+          responseReceived: true
+        })
 
-			});
-		});
+      });
+    });
   }
     render(){
         var today = new Date();
@@ -102,7 +102,7 @@ class Input extends React.Component {
                     name="name"
                     autoComplete="name"
                     autoFocus
-					onInput={ e=>{this.uploadCity = e.target.value}}
+          onInput={ e=>{this.uploadCity = e.target.value}}
                 />
                 <TextField
                     variant="outlined"
@@ -113,7 +113,7 @@ class Input extends React.Component {
                     label="Enter Date"
                     type="date"
                     defaultValue={this.state.date}
-					onInput={ e=>{this.uploadDate = e.target.value}}
+          onInput={ e=>{this.uploadDate = e.target.value}}
                     autoComplete="Date"
                     autoFocus
                     InputLabelProps={{
@@ -130,14 +130,14 @@ class Input extends React.Component {
                     Search
                 </Button>
                 </form>}</>
-			<>{this.state.responseReceived &&<Container component="main" maxWidth="xs" className={classes.container}>
-			<this.state.MapWithGroundOverlay
-		        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUjKlnObDJwUO6f2ueMvzc3UyF_Jepd5U&v=3.exp&libraries=geometry,drawing,places"
-		        loadingElement={<div style={{ height: `100%` }} />}
-		        containerElement={<div style={{ height: `400px` }} />}
-		        mapElement={<div style={{ height: `100%` }} />}
-		      />
-			</Container> }</>
+      <>{this.state.responseReceived &&<Container component="main" maxWidth="xs" className={classes.container}>
+      <this.state.MapWithGroundOverlay
+            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUjKlnObDJwUO6f2ueMvzc3UyF_Jepd5U&v=3.exp&libraries=geometry,drawing,places"
+            loadingElement={<div style={{ height: `100%` }} />}
+            containerElement={<div style={{ height: `400px` }} />}
+            mapElement={<div style={{ height: `100%` }} />}
+          />
+      </Container> }</>
             </div>
            
         </Container>
