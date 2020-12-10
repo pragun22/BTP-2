@@ -171,6 +171,7 @@ def hydrology_mapping1(dem, rain, infiltration=None, soil=None):
         randomField = scalar(rain)
         runoff = accuthresholdflux(ldd, randomField, infilcap)
         x = pcr2numpy(runoff, 0)
+        print(x)
         filename = "static" + "/" + str(uuid.uuid4()) + ".jpg"
         matplotlib.plot(runoff, labels=None, title=None,
                         filename=filename)
@@ -199,6 +200,7 @@ def hydrology_mapping(dem, rain, infiltration=None, soil=None, flag=0):
         randomField = scalar(rain)
         runoff = accuthresholdflux(ldd, randomField, infilcap)
         x = pcr2numpy(runoff, 0)
+        print(x)
         filename = str(uuid.uuid4()) + ".jpg"
         filename = "static/" + filename
         fig = plt.figure(frameon=False)
@@ -224,7 +226,7 @@ def map_hydrology(city, date):
     process_file(city)
     cityCentre = [(float(cityToBbox[city][0]) + float(cityToBbox[city][2])) / 2,
                   (float(cityToBbox[city][1]) + float(cityToBbox[city][3])) / 2]
-    return cityCentre, [lngmin, latmin, lngmax, latmax],  hydrology_mapping("scaled.tif", rain)
+    return cityCentre, [lngmin, latmin, lngmax, latmax],  hydrology_mapping("scaled.tif", rain), rain
 
 
 def custom_hydrology(rain, dem, infiltration=None, soil=None):

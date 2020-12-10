@@ -21,7 +21,8 @@ class Input extends React.Component {
           url:'',
           center:'',
           bbox:'',
-          MapWithGroundOverlay:''
+          MapWithGroundOverlay:'',
+          rainfall:''
         }
       this.handleSubmit = this.handleSubmit.bind(this);
       this.handleMap = this.handleMap.bind(this);
@@ -72,6 +73,9 @@ class Input extends React.Component {
         this.setState({
           bbox: body.bbox
         })
+          this.setState({
+          rainfall: body.rainfall
+        })
         
         this.handleMap();
         this.setState({
@@ -88,11 +92,11 @@ class Input extends React.Component {
         <Container component="main" maxWidth="xs" className={classes.container}>
             <CssBaseline />
             <div className={classes.paper}>
+               
+                <>{!this.state.responseReceived && <form className={classes.form} onSubmit={this.handleSubmit}  noValidate>
                 <Typography component="h1" variant="h5" className={classes.text}>
                 Enter Details
-                </Typography>
-                <>{!this.state.responseReceived && <form className={classes.form} onSubmit={this.handleSubmit}  noValidate>
-                <TextField
+                </Typography> <TextField
                     variant="outlined"
                     margin="normal"
                     required
@@ -131,7 +135,10 @@ class Input extends React.Component {
                 </Button>
                 </form>}</>
       <>{this.state.responseReceived &&<Container component="main" maxWidth="xs" className={classes.container}>
-      <this.state.MapWithGroundOverlay
+      <Typography component="h6" variant="h7" className={classes.text}>
+                Predicted Rainfall on {this.state.date} = {this.state.rainfall}mm
+                </Typography><br/>
+           <this.state.MapWithGroundOverlay
             googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUjKlnObDJwUO6f2ueMvzc3UyF_Jepd5U&v=3.exp&libraries=geometry,drawing,places"
             loadingElement={<div style={{ height: `100%` }} />}
             containerElement={<div style={{ height: `400px` }} />}

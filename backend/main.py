@@ -60,12 +60,11 @@ def runner():
     # print(request.form['city'], request.form['date'])
     city = request.form['city']
     date = request.form['date']
-    centre, bbox, filename = hydrology.map_hydrology(city, date)
-    print(filename, centre, bbox)
+    centre, bbox, filename, rainfall = hydrology.map_hydrology(city, date)
     if isinstance(filename, list):
         return jsonify({"err": "An unexpected error occured"}), 500
     else:
-        return jsonify({"centre": centre, "bbox": bbox, "url": "http://localhost:8081/" + filename}), 200
+        return jsonify({"centre": centre, "bbox": bbox, "url": "http://localhost:8081/" + filename, "rainfall":rainfall}), 200
 
 @app.route('/rain_pred', methods=['GET', 'POST'])
 def rainfall_prediction():
