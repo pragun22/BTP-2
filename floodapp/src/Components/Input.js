@@ -6,11 +6,15 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import Hyderabad from './Hyderabad.js'
+import Surat from './Surat.js'
+import Chennai from './Chennai.js'
 import { 
   withScriptjs,
   withGoogleMap,
   GoogleMap,
-  GroundOverlay } from "react-google-maps"
+  GroundOverlay,
+  Polygon } from "react-google-maps"
 class Input extends React.Component {
     constructor(props){
         super(props);
@@ -22,18 +26,30 @@ class Input extends React.Component {
           center:'',
           bbox:'',
           MapWithGroundOverlay:'',
-          rainfall:''
+          rainfall:'',
+          city:'',
+          cityJ:''
         }
       this.handleSubmit = this.handleSubmit.bind(this);
       this.handleMap = this.handleMap.bind(this);
     }
     handleMap(){
+      if(this.state.city == "Hyderabad"){
+        this.state.cityJ = Hyderabad;
+      }
+        else if(this.state.city == "Surat"){
+        this.state.cityJ = Surat;
+      }
+       else if(this.state.city == "Chennai"){
+        this.state.cityJ = Chennai;
+      }
     const { compose } = require("recompose");
   const {
     withScriptjs,
     withGoogleMap,
     GoogleMap,
     GroundOverlay,
+    Polygon,
   } = require("react-google-maps");
       this.state.MapWithGroundOverlay = compose(
     withScriptjs,
@@ -51,6 +67,17 @@ class Input extends React.Component {
         )}
         defaultOpacity={0.3}
       />
+       <Polygon
+        path={this.state.cityJ}
+        key={1}
+        options={{
+            fillColor: "#0F0",
+            fillOpacity: 0.1,
+            strokeColor: "#0F0",
+            strokeOpacity: 0.1,
+            strokeWeight: 1
+        }}
+       />
     </GoogleMap>
 );
     }
@@ -59,6 +86,7 @@ class Input extends React.Component {
     const data = new FormData();
     data.append('city', this.uploadCity);
     data.append('date', this.uploadDate);
+    const CITY = this.uploadCity;
     fetch('http://localhost:8081/get_map', {
       method: 'POST',
       body: data,
@@ -76,7 +104,9 @@ class Input extends React.Component {
           this.setState({
           rainfall: body.rainfall
         })
-        
+            this.setState({
+          city: CITY
+        })
         this.handleMap();
         this.setState({
           responseReceived: true

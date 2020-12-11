@@ -200,14 +200,15 @@ def hydrology_mapping(dem, rain, infiltration=None, soil=None, flag=0):
         randomField = scalar(rain)
         runoff = accuthresholdflux(ldd, randomField, infilcap)
         x = pcr2numpy(runoff, 0)
-        print(x)
+        nx = np.zeros(x.shape)
+        nx[:-10][:] = x[:][9:-1]
         filename = str(uuid.uuid4()) + ".jpg"
         filename = "static/" + filename
         fig = plt.figure(frameon=False)
         ax = plt.Axes(fig, [0., 0., 1., 1.])
         ax.set_axis_off()
         fig.add_axes(ax)
-        ax.imshow(x, aspect='auto', cmap='Reds')
+        ax.imshow(nx, aspect='auto', cmap='Reds')
         fig.savefig(filename)
         return filename
     except:
