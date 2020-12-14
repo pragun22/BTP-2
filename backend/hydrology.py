@@ -30,7 +30,9 @@ cdict = {'red':   ((0.0, 0.0, 0.0),
          'green': ((0.0, 0.0, 1.0),
                    (0.5, 0.0, 0.0),
                    (1.0, 0.0, 0.0))}
-cmap = mcolors.LinearSegmentedColormap('my_colormap', cdict, 100)
+cmap = mcolors.ListedColormap(['white', 'blue', 'orange', 'red'])
+bounds=[0, 810, 1400, 1980, 10000]
+norm = mcolors.BoundaryNorm(bounds, cmap.N)
 
 home = expanduser("~")
 cwd = os.getcwd()
@@ -200,15 +202,14 @@ def hydrology_mapping(dem, rain, infiltration=None, soil=None, flag=0):
         randomField = scalar(rain)
         runoff = accuthresholdflux(ldd, randomField, infilcap)
         x = pcr2numpy(runoff, 0)
-        nx = np.zeros(x.shape)
-        nx[:-10][:] = x[:][9:-1]
+        print(np.max(x), np.min(x))
         filename = str(uuid.uuid4()) + ".jpg"
         filename = "static/" + filename
         fig = plt.figure(frameon=False)
         ax = plt.Axes(fig, [0., 0., 1., 1.])
         ax.set_axis_off()
         fig.add_axes(ax)
-        ax.imshow(nx, aspect='auto', cmap='Reds')
+        ax.imshow(x, aspect='auto', cmap=cmap, norm=norm)
         fig.savefig(filename)
         return filename
     except:

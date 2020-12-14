@@ -9,6 +9,7 @@ import Container from '@material-ui/core/Container';
 import Hyderabad from './Hyderabad.js'
 import Surat from './Surat.js'
 import Chennai from './Chennai.js'
+import Pune from './Pune.js'
 import { 
   withScriptjs,
   withGoogleMap,
@@ -43,6 +44,9 @@ class Input extends React.Component {
        else if(this.state.city == "Chennai"){
         this.state.cityJ = Chennai;
       }
+      else if(this.state.city == "Pune"){
+        this.state.cityJ = Pune;
+      }
     const { compose } = require("recompose");
   const {
     withScriptjs,
@@ -75,7 +79,7 @@ class Input extends React.Component {
             fillOpacity: 0.1,
             strokeColor: "#0F0",
             strokeOpacity: 0.1,
-            strokeWeight: 1
+            strokeWeight: 0.1
         }}
        />
     </GoogleMap>

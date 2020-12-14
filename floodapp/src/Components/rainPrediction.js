@@ -38,6 +38,7 @@ class RainPrediction extends React.Component {
 				})
 			});
 		});
+			console.log(this.state);
 
   }
 
