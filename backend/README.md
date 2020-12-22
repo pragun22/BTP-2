@@ -6,6 +6,8 @@
 
 # API endpoints
 * /get_map
+* /custom_data
+* /rain_pred
 
 **Request Method** - GET
 

@@ -8,23 +8,19 @@ import os
 from flask_cors import CORS
 import rain_pred
 app = Flask(__name__)
+
+# allow cross origin access
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
+
 app.config['UPLOAD_FOLDER'] = "userdata"
 
-
-class NumpyEncoder(json.JSONEncoder):
-
-    def default(self, obj):
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return json.JSONEncoder.default(self, obj)
-
-
+# Takes custom data for catchment and performs hydrology mapping
 @app.route('/custom_data', methods=['GET', 'POST'])
 def file_upload():
     target = "userdata"
     if not os.path.isdir(target):
         os.mkdir(target)
+    # check if infiltration data is uploaded
     try:
         infil = request.files['infil']
         forma = infil.filename.split('.')[1]
@@ -32,6 +28,7 @@ def file_upload():
         infil = "/".join([target, "infil." + forma])
     except:
         infil = None
+    # checks if soil data is uploaded
     try:
         soil = request.files['soil']
         forma = soil.filename.split('.')[1]
@@ -47,17 +44,17 @@ def file_upload():
         rain = int(request.form['rain'])
     except:
         rain = request.files['rain']
+
+    # calls hydrology mapping function which returns a plot
     filename = hydrology.custom_hydrology(rain, dem, infil, soil)
-    print(filename)
     if isinstance(filename, list):
         return jsonify({"url": "http://localhost:8081/static/error.png"}), 200
     return jsonify({"url": "http://localhost:8081/" + filename}), 200
 
-
+# Performs hydrology mapping for city and returns a plot
 @app.route('/get_map', methods=['GET', 'POST'])
 def runner():
-    # replace with this later
-    # print(request.form['city'], request.form['date'])
+    # get city and date from request
     city = request.form['city']
     date = request.form['date']
     centre, bbox, filename, rainfall = hydrology.map_hydrology(city, date)
@@ -66,6 +63,7 @@ def runner():
     else:
         return jsonify({"centre": centre, "bbox": bbox, "url": "http://localhost:8081/" + filename, "rainfall":rainfall}), 200
 
+# Takes time series as input and predicts rainfall.
 @app.route('/rain_pred', methods=['GET', 'POST'])
 def rainfall_prediction():
 	return jsonify({"url": "http://localhost:8081/" + rain_pred.pred()}), 200

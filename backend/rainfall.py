@@ -18,13 +18,14 @@ def render_page(url):
     driver.quit()
     return r
 
-
+# scarapes wunderground website
 def scraper(url):
     r = render_page(url)
     soup = BS(r, "html.parser")
     container = soup.find('lib-city-hourly-forecast')
     check = container.find('tbody')
     data = []
+    # gets hourly rainfall for given date
     for c in check.find_all('tr', class_='ng-star-inserted'):
         for j in c.find_all('span', class_='wu-unit-rain'):
             i = j.find('span', 'wu-value-to')

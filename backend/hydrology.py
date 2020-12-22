@@ -22,16 +22,10 @@ import rasterio.merge
 import rainfall
 import uuid
 import matplotlib.colors as mcolors
-cdict = {'red':   ((0.0, 0.0, 0.0),
-                   (0.5, 0.0, 0.0),
-                   (1.0, 1.0, 1.0)),
-         'blue':  ((0.0, 0.0, 0.0),
-                   (1.0, 0.0, 0.0)),
-         'green': ((0.0, 0.0, 1.0),
-                   (0.5, 0.0, 0.0),
-                   (1.0, 0.0, 0.0))}
+
 cmap = mcolors.ListedColormap(['white', 'blue', 'orange', 'red'])
-bounds=[0, 810, 1400, 1980, 10000]
+# bounds defined for colorcoding in mm
+bounds=[0, 310, 1400, 1700, 10000]
 norm = mcolors.BoundaryNorm(bounds, cmap.N)
 
 home = expanduser("~")
@@ -49,7 +43,7 @@ with open('fileBbox.json', 'r') as fp:
 
 lngmin, lngmax, latmin, latmax = -1, -1, -1, -1
 
-
+# checks the orientation of dem files for merging 
 def check(files):
     coords = []
     for x in files:
@@ -66,7 +60,7 @@ def check(files):
 def comparator(file):
     return file[:-5][-6:]
 
-
+# downscales images if images size is very large. For faster processing
 def scale_image(dem, dimension):
     try:
         with rasterio.Env():
@@ -85,7 +79,7 @@ def scale_image(dem, dimension):
     except:
         pass
 
-
+# processes dem file downloaded from bhuvan
 def process_file(city):
     files = []
     Bbox = [1e6, 1e6, 0, 0]
@@ -94,6 +88,7 @@ def process_file(city):
     latmin = 1e6
     lngmax = -1
     lngmin = 1e6
+    # computes the bounding box for current city
     for file in cityToFile[city]:
         files.append(file)
         lngmin = min(lngmin, int(fileToBbox[file][0]))
@@ -104,6 +99,7 @@ def process_file(city):
     if len(files) == 1:
         dem = glob.glob('dataset/' + files[0] + '/*/*.tif')[0]
         scale_image(dem, (100, 100))
+    # city dem data composed of 4 tiles of bhuvan data
     elif len(files) == 4:
         files = sorted(files, key=comparator)
         dem0 = glob.glob('dataset/' + files[0] + '/*/*.tif')[0]
@@ -124,8 +120,9 @@ def process_file(city):
         with rasterio.open("scaled.tif", "w", **out_meta) as dest:
             dest.write(mosaic)
         scale_image('scaled.tif', (200, 200))
+    # city dem data composed of 2 tiles of bhuvan data
     else:
-        # side
+        # both tiles side by side
         if check(files):
             files = sorted(files, key=comparator)
             dem0 = glob.glob('dataset/' + files[0] + '/*/*.tif')[0]
@@ -142,7 +139,7 @@ def process_file(city):
             with rasterio.open("scaled.tif", "w", **out_meta) as dest:
                 dest.write(mosaic)
             scale_image('scaled.tif', (100, 200))
-        # down
+        # one tile lies above other
         else:
             files = sorted(files, key=comparator)
             dem0 = glob.glob('dataset/' + files[0] + '/*/*.tif')[0]
@@ -161,48 +158,61 @@ def process_file(city):
             scale_image('scaled.tif', (200, 100))
 
 
+# performs hydrological mapping for custom catchment
 def hydrology_mapping1(dem, rain, infiltration=None, soil=None):
     try:
+        # create local drain direction
         ldd = lddcreate(dem, 1e31, 1e31, 1e31, 1e31)
+        # set infiltration to 0
         infilcap = scalar(0)
         if soil is not None:
+            # if infiltration data availble then use it along with soil data
             if infiltration is not None:
                 infilcap = lookupscalar(infiltration, soil)
             else:
                 infilcap = scalar(soil)
+        # calculate runoff by simulating flow
         randomField = scalar(rain)
         runoff = accuthresholdflux(ldd, randomField, infilcap)
         x = pcr2numpy(runoff, 0)
-        print(x)
+        runoff/=1000
+        print(np.max(x))
         filename = "static" + "/" + str(uuid.uuid4()) + ".jpg"
+        # create and save plot and return url where plot is stored
         matplotlib.plot(runoff, labels=None, title=None,
                         filename=filename)
         return filename
     except:
         return []
 
-
+# performs city level hydrological mapping
 def hydrology_mapping(dem, rain, infiltration=None, soil=None, flag=0):
     try:
+        # load dem data
         x = gdal.Open(dem)
         gdal_band = x.GetRasterBand(1)
         nodataval = gdal_band.GetNoDataValue()
         x = x.ReadAsArray().astype(np.float)
+        # replace no val with very large value
         if np.any(x == nodataval):
             x[x == nodataval] = 1e31
         setclone(x.shape[0], x.shape[1], 0.1, -lngmin, latmin)
         x = numpy2pcr(Scalar, x, 0)
+        # create local drain direction
         ldd = lddcreate(x, 1e31, 1e31, 1e31, 1e31)
+        
+        # set infiltration to 0
         infilcap = scalar(0)
         if soil is not None:
+            # if infiltration data availble then use it along with soil data
             if infiltration is not None:
                 infilcap = lookupscalar(infiltration, soil)
             else:
                 infilcap = scalar(soil)
         randomField = scalar(rain)
+        # calculate runoff by simulating flow
         runoff = accuthresholdflux(ldd, randomField, infilcap)
         x = pcr2numpy(runoff, 0)
-        print(np.max(x), np.min(x))
         filename = str(uuid.uuid4()) + ".jpg"
         filename = "static/" + filename
         fig = plt.figure(frameon=False)
@@ -210,11 +220,12 @@ def hydrology_mapping(dem, rain, infiltration=None, soil=None, flag=0):
         ax.set_axis_off()
         fig.add_axes(ax)
         ax.imshow(x, aspect='auto', cmap=cmap, norm=norm)
+        # create and save plot and return url where plot is stored
         fig.savefig(filename)
+        plt.close()
         return filename
     except:
         return []
-
 
 def map_hydrology(city, date):
     try:
@@ -222,9 +233,9 @@ def map_hydrology(city, date):
     except:
         pass
     city = city.lower()
-    rain = 5
-    # rain = rainfall.get_rainfall(city, date)
-    print(rain)
+    # gets rainfall prediction from wunderground
+    rain = rainfall.get_rainfall(city, date)
+    # processes dem data for current city
     process_file(city)
     cityCentre = [(float(cityToBbox[city][0]) + float(cityToBbox[city][2])) / 2,
                   (float(cityToBbox[city][1]) + float(cityToBbox[city][3])) / 2]
@@ -232,9 +243,10 @@ def map_hydrology(city, date):
 
 
 def custom_hydrology(rain, dem, infiltration=None, soil=None):
-    # if dem in map format then not nedd to rescale
+    # if dem in map format then not need to rescale
     if dem[-3:] == "map":
         return hydrology_mapping1(dem, rain, infiltration, soil)
     else:
+        # downscales image for faster processing
         scale_image(dem, (100, 100))
         return hydrology_mapping("scaled.tif", rain, infiltration, soil, 1)

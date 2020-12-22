@@ -7,9 +7,9 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Hyderabad from './Hyderabad.js'
-import Surat from './Surat.js'
 import Chennai from './Chennai.js'
 import Pune from './Pune.js'
+import Surat from './Surat.js'
 import { 
   withScriptjs,
   withGoogleMap,
@@ -91,6 +91,7 @@ class Input extends React.Component {
     data.append('city', this.uploadCity);
     data.append('date', this.uploadDate);
     const CITY = this.uploadCity;
+    const DATE = this.uploadDate;
     fetch('http://localhost:8081/get_map', {
       method: 'POST',
       body: data,
@@ -110,6 +111,9 @@ class Input extends React.Component {
         })
             this.setState({
           city: CITY
+        })
+             this.setState({
+          date: DATE
         })
         this.handleMap();
         this.setState({
@@ -167,7 +171,8 @@ class Input extends React.Component {
                 >
                     Search
                 </Button>
-                </form>}</>
+                </form>
+              }</>
       <>{this.state.responseReceived &&<Container component="main" maxWidth="xs" className={classes.container}>
       <Typography component="h6" variant="h7" className={classes.text}>
                 Predicted Rainfall on {this.state.date} = {this.state.rainfall}mm
@@ -178,6 +183,7 @@ class Input extends React.Component {
             containerElement={<div style={{ height: `400px` }} />}
             mapElement={<div style={{ height: `100%` }} />}
           />
+      <img src={require('./legend.png')} />
       </Container> }</>
             </div>
            

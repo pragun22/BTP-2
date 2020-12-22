@@ -13,7 +13,9 @@ import matplotlib.pyplot as plt
 
 import itertools
 import uuid
+# makes rainfall prediction by running ARIMA model
 def pred():
+	# data read and preprocessing
 	filename = 'modified_rainfall2.csv'
 	rainfall_data_matrix = pd.read_csv(filename, header = 0,delimiter=',')
 	rainfall_data_matrix.set_index("Year", inplace=True)
@@ -26,6 +28,8 @@ def pred():
 	rainfall_data.set_index(dates, inplace=True)
 	test_rainfall_data = rainfall_data.loc['1995':'2000']
 	rainfall_data = rainfall_data.loc[: '1994']
+	
+	# best values identified for the model in BTP-1
 	best_pdq = (1, 0, 0)
 	best_seasonal_pdq = (0, 1, 1, 12)
 	best_model = sm.tsa.statespace.SARIMAX(rainfall_data,
@@ -38,12 +42,14 @@ def pred():
 	pred_dynamic_ci = pred_dynamic.conf_int()
 	rainfall_predicted = pred_dynamic.predicted_mean
 	rainfall_truth = rainfall_data['1990':].Precipitation
+	
+	# calculate mean squared error
 	mse = math.sqrt(((rainfall_predicted - rainfall_truth) ** 2).mean())
 	rainfall_data.index[-1]
 	rainfall_dummy_data = rainfall_data
 	rainfall_dummy_data.columns = ['Train data']
 	n_steps = 96
-	pred_uc_95 = best_results.get_forecast(steps=n_steps, alpha=0.05) # alpha=0.05 95% CI
+	pred_uc_95 = best_results.get_forecast(steps=n_steps, alpha=0.05) 
 	pred_ci_95 = pred_uc_95.conf_int()
 	index = pd.date_range(rainfall_data.index[-1], periods=n_steps, freq='MS')
 	forecast_data = pd.DataFrame(np.column_stack([pred_uc_95.predicted_mean, pred_ci_95]), 
@@ -57,6 +63,7 @@ def pred():
 	plt.title("Rainfall prediction for 2021")
 	plt.xlabel("Month")
 	plt.ylabel("Rainfall in mm")
+	# creating plot for next year
 	plt.plot(XX, yy)
 	filename = "static" + "/" + str(uuid.uuid4()) + ".jpg"
 	plt.savefig(filename, dpi=100)
