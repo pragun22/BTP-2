@@ -38,7 +38,13 @@
   * **rain** - Rainfall time series in csv format.
 
   #### Response
-  * **url** * - Denotes the url where generated plot is stored
+  * **url** - Denotes the url where generated plot is stored
 
+# Files
+* **main.py** - Contains all the API endpoints and handle all requests and responses.
+* **rain_pred.py** - Contains functions for runnning ARIMA model for rainfall prediction.
+* **hydrology.py** - Contains functions for performing hydrology mapping and processing dem data.
+* **rainfall.py** - Contains functions for scraping rainfall data from Weather Underground.
+* **bhuvan-downloader.py** - Automates the process of downloading data from Bhuvan. Gets bounding box for city using Google Map's geocoding API and then downloads the  data.
 
 
