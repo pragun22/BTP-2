@@ -3,6 +3,7 @@
 * Navigate to backend directory using command line.
 * Run ```conda env create -f environment.yml```.
 * Run ```conda activate btp-2```
+* Start the backend server using ```python main.py```
 
 # API endpoints
 * /get_map - Performs hydrology mapping for city and returns a plot for overlaying on the Google Map interface.
