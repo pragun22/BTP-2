@@ -222,7 +222,7 @@ def hydrology_mapping(dem, rain, infiltration=None, soil=None, flag=0):
         ax.imshow(x, aspect='auto', cmap=cmap, norm=norm)
         # create and save plot and return url where plot is stored
         fig.savefig(filename)
-        plt.close()
+        plt.close(fig)
         return filename
     except:
         return []
@@ -234,7 +234,8 @@ def map_hydrology(city, date):
         pass
     city = city.lower()
     # gets rainfall prediction from wunderground
-    rain = rainfall.get_rainfall(city, date)
+    rain = 5
+    # rain = rainfall.get_rainfall(city, date)
     # processes dem data for current city
     process_file(city)
     cityCentre = [(float(cityToBbox[city][0]) + float(cityToBbox[city][2])) / 2,

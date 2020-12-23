@@ -1,4 +1,9 @@
 import requests
+from selenium import webdriver
+from time import sleep
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
+lat_min, lat_max, lng_min, lng_max = -1, -1, -1, -1
 
 # gets city bounding box
 def get_bounding_box(city):
@@ -13,25 +18,19 @@ def get_bounding_box(city):
     lat_max = north_east['lat'] + 1
     lng_min = south_west['lng'] - 1
     lng_max = north_east['lng'] + 1
-    print(lat_min, lat_max, lng_min, lng_max)
+    print(lat_min+1, lat_max-1, lng_min+1, lng_max-1)
     return 1
     # except:
     # return 0
-
-
+get_bounding_box("Hyderabad")
 
 # Downloads data from bhuvan
+options = webdriver.ChromeOptions()
+# options.add_argument("--headless")
 driver = webdriver.Chrome(
     "/usr/lib/chromium-browser/chromedriver", options=options)
-driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
-params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': cwd+"/dataset"}}
-command_result = driver.execute("send_command", params)
 # opens bhuvan data download homepage
 driver.get('https://bhuvan-app3.nrsc.gov.in/data/download/index.php')
-
-DOWNLOAD_PATH = home + '/Downloads'
-lat_min, lat_max, lng_min, lng_max = -1, -1, -1, -1
-
 
 # loads bhuvan credentials
 with open('credentials.txt', 'r') as myfile:
@@ -54,7 +53,8 @@ def login(username, password):
     submit_button = driver.find_element_by_name('submit')
     submit_button.click()
     sleep(5)
-    driver.switch_to_default_content()
+    driver.switch_to.default_content
+    # driver.switch_to_default_content()
     sleep(2)
 
 login(username, password)
@@ -66,7 +66,7 @@ def download(lat_min, lng_min, lat_max, lng_max):
     assert lat_max >= 6 and lat_max <= 40, "latitude should be between 6 and 40 degree"
     assert lng_min >= 66 and lng_min <= 102, "longiitude should be between 66 and 102 degree"
     assert lng_max >= 66 and lng_max <= 102, "longiitude should be between 66 and 102 degree"
-    driver.switch_to_default_content()
+    driver.switch_to.default_content()
     driver.switch_to.frame(driver.find_element_by_id("startPageFrame"))
     category = driver.find_element_by_id('Prj')
     category.click()
@@ -95,3 +95,4 @@ def download(lat_min, lng_min, lat_max, lng_max):
         "//img[@title='Click to download tile']")
     download_button.click()
     sleep(20)
+download(lat_min, lng_min, lat_max, lng_max)
