@@ -1,5 +1,5 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-# Backend Setup
+# Frontend Setup
 * Install yarn. Follow the instructions given [here](https://classic.yarnpkg.com/en/docs/install/#debian-stable).
 * Navigate to frontend directory using command line.
 * Run ```yarn install```.
