@@ -162,6 +162,7 @@ def process_file(city):
 def hydrology_mapping1(dem, rain, infiltration=None, soil=None):
     try:
         # create local drain direction
+        setclone(dem)
         ldd = lddcreate(dem, 1e31, 1e31, 1e31, 1e31)
         # set infiltration to 0
         infilcap = scalar(0)
@@ -222,7 +223,7 @@ def hydrology_mapping(dem, rain, infiltration=None, soil=None, flag=0):
         ax.imshow(x, aspect='auto', cmap=cmap, norm=norm)
         # create and save plot and return url where plot is stored
         fig.savefig(filename)
-        plt.close(fig)
+        plt.close(fig)  
         return filename
     except:
         return []

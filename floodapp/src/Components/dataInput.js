@@ -62,7 +62,6 @@ class UserInput extends React.Component {
 					<Input
 						type="file"
 						 onInput={ e=>{this.uploadDem = e.target.files[0]}}
-						// ref={(ref) => { this.uploadDem = ref; }}
 						id="dem"
 					/>
 					
@@ -74,7 +73,6 @@ class UserInput extends React.Component {
 					<Input
 						type="file"
 						 onInput={ e=>{this.uploadInf = e.target.files[0]}}
-						// ref={(ref) => { this.uploadInf = ref; }}
 					/>
 				</div>
 				<div className="input-div">
@@ -84,7 +82,6 @@ class UserInput extends React.Component {
 					<Input
 						type="file"
 						 onInput={ e=>{this.uploadSoil = e.target.files[0]}}
-						// ref={(ref) => { this.uploadSoil = ref; }}
 					/>
 				</div>
 				<div className="input-div">
@@ -100,8 +97,6 @@ class UserInput extends React.Component {
 						name="Rain"
 						autoComplete="name"
 						 onInput={ e=>{this.rainData = e.target.value}}
-
-						// ref={(ref) => { this.rainData = ref; }}
 						autoFocus
 					/>
 				</div>

@@ -7,6 +7,7 @@ import json
 import os
 from flask_cors import CORS
 import rain_pred
+import glob
 app = Flask(__name__)
 
 # allow cross origin access
@@ -20,6 +21,10 @@ def file_upload():
     target = "userdata"
     if not os.path.isdir(target):
         os.mkdir(target)
+    files = glob.glob(target + "/*")
+    for f in files:
+        os.remove(f)
+    print(request.files)
     # check if infiltration data is uploaded
     try:
         infil = request.files['infil']
