@@ -4,6 +4,23 @@
 * Run ```conda env create -f environment.yml```.
 * Run ```conda activate btp-2```
 * Start the backend server using ```python main.py```
+# Deployment
+Follow the following steps for deployment on Heroku.
+
+* Create an account on Heroku
+* Install Heroku CLI locally. Follow the steps mentioned [here](https://devcenter.heroku.com/articles/heroku-cli).
+* Run ```heroku login``` command. You’ll be prompted to enter any key to go to your web browser to complete login. The CLI will then log you in automatically.
+* Copy the contents of backend app in a separate directory named backend.
+* Navigate to the new directory using ```cd backend```.
+* Run following commands
+```
+git init
+heroku create -b https://github.com/pl31/heroku-buildpack-conda
+git add .
+git commit -m "deploy backend"
+git push heroku master
+````
+After deployment the app will be visible in Heroku dashboard and a public URL will be available for access. Update the routes in frontend app based on backend's URL.
 
 # API endpoints
 * /get_map - Performs hydrology mapping for city and returns a plot for overlaying on the Google Map interface.
