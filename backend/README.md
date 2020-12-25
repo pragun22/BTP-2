@@ -26,6 +26,7 @@ After deployment the app will be visible in Heroku dashboard and a public URL wi
 * Create a new app on Heroku. Give a name to the application.
 * Choose deployment method as Github, connect the Github account containing the app.
 * Search for the repository name and click on connect.
+* Open the Settings tab and locate Buildpacks and click “Add buildpack”. Enter ```https://github.com/pl31/heroku-buildpack-conda.git``` in the URL field and save changes.
 * If you wish to enable Automatic deployment, select “Enable Automatic Deploys” option.
 * Click on Deploy branch.
 
