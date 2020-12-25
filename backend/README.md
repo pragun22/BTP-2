@@ -21,6 +21,14 @@ git commit -m "deploy backend"
 git push heroku master
 ````
 After deployment the app will be visible in Heroku dashboard and a public URL will be available for access. Update the routes in frontend app based on backend's URL.
+# Deploy directly from Github
+* Create a Heroku account.
+* Create a new app on Heroku. Give a name to the application.
+* Choose deployment method as Github, connect the Github account containing the app.
+* Search for the repository name and click on connect.
+* If you wish to enable Automatic deployment, select “Enable Automatic Deploys” option.
+* Click on Deploy branch.
+
 
 # API endpoints
 * /get_map - Performs hydrology mapping for city and returns a plot for overlaying on the Google Map interface.
